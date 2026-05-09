@@ -66,7 +66,7 @@ if (isset($_POST['submit'])) {
             <div style="margin-bottom: 10px;">
                 Semester: 
                 <select name="semester" style="width:100%; padding: 8px;">
-                    <option>1</option><option>2</option><option>3</option><option>4</option>
+                    <option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option>
                 </select>
             </div>
             <div style="margin-bottom: 10px;">

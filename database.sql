@@ -79,7 +79,12 @@ BEGIN
             v_course,
             v_semester,
             2026,
-            IF(i MOD 2 = 0, 'HTML, PHP, MySQL', 'HTML, CSS'),
+            CASE i MOD 4
+                WHEN 0 THEN 'HTML, PHP, MySQL'
+                WHEN 1 THEN 'Python, Java'
+                WHEN 2 THEN 'SQL, CSS'
+                ELSE 'HTML, CSS, Java'
+            END,
             v_hostel,
             v_fee
         );

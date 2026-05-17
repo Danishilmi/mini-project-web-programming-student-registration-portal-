@@ -4,11 +4,30 @@ require_login();
 require_once "config.php";
 
 $search = trim($_GET["search"] ?? "");
+$skill = trim($_GET["skill"] ?? "");
+$allowedSkills = ["HTML", "PHP", "MySQL", "Python", "Java", "SQL", "CSS"];
 
-if ($search !== "") {
+if (!in_array($skill, $allowedSkills, true)) {
+    $skill = "";
+}
+
+if ($search !== "" && $skill !== "") {
+    $term = "%" . $search . "%";
+    $skillTerm = "%" . $skill . "%";
+    $stmt = $conn->prepare("SELECT * FROM students WHERE (student_id LIKE ? OR full_name LIKE ? OR course LIKE ?) AND skills LIKE ? ORDER BY id DESC");
+    $stmt->bind_param("ssss", $term, $term, $term, $skillTerm);
+    $stmt->execute();
+    $students = $stmt->get_result();
+} elseif ($search !== "") {
     $term = "%" . $search . "%";
     $stmt = $conn->prepare("SELECT * FROM students WHERE student_id LIKE ? OR full_name LIKE ? OR course LIKE ? ORDER BY id DESC");
     $stmt->bind_param("sss", $term, $term, $term);
+    $stmt->execute();
+    $students = $stmt->get_result();
+} elseif ($skill !== "") {
+    $skillTerm = "%" . $skill . "%";
+    $stmt = $conn->prepare("SELECT * FROM students WHERE skills LIKE ? ORDER BY id DESC");
+    $stmt->bind_param("s", $skillTerm);
     $stmt->execute();
     $students = $stmt->get_result();
 } else {
@@ -36,7 +55,15 @@ if ($search !== "") {
 
         <form method="get" class="search-bar">
             <input type="search" name="search" value="<?= e($search) ?>" placeholder="Search by ID, name, or course">
-            <button type="submit" class="primary-btn">Search Data</button>
+            <select name="skill">
+                <option value="">All Skills</option>
+                <?php foreach ($allowedSkills as $skillOption): ?>
+                    <option value="<?= e($skillOption) ?>" <?= $skill === $skillOption ? "selected" : "" ?>>
+                        <?= e($skillOption) ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <button type="submit" class="primary-btn">Filter Data</button>
             <a class="secondary-btn" href="view.php">Clear</a>
         </form>
 
@@ -54,14 +81,13 @@ if ($search !== "") {
                             <th>Course</th>
                             <th>Semester</th>
                             <th>Skills</th>
-                            <th>Hostel</th>
                             <th>Total Fee</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
                         <?php if ($students->num_rows === 0): ?>
-                            <tr><td colspan="12" class="empty">No registered students found.</td></tr>
+                            <tr><td colspan="11" class="empty">No registered students found.</td></tr>
                         <?php endif; ?>
 
                         <?php $no = 1; ?>
@@ -76,7 +102,6 @@ if ($search !== "") {
                                 <td><?= e($row["course"]) ?></td>
                                 <td><?= e($row["semester"]) ?></td>
                                 <td><?= e($row["skills"]) ?></td>
-                                <td><?= $row["hostel"] ? "Yes" : "No" ?></td>
                                 <td>RM <?= number_format((float) $row["total_fee"], 2) ?></td>
                                 <td class="action-links">
                                     <a href="edit.php?id=<?= e($row["id"]) ?>">Edit</a>
@@ -90,4 +115,21 @@ if ($search !== "") {
         </section>
     </main>
 </body>
-</html>
+</html><?php
+require_once "auth.php";
+require_login();
+require_once "config.php";
+
+$search = trim($_GET["search"] ?? "");
+
+if ($search !== "") {
+    $term = "%" . $search . "%";
+    $stmt = $conn->prepare("SELECT * FROM students WHERE student_id LIKE ? OR full_name LIKE ? OR course LIKE ? ORDER BY id DESC");
+    $stmt->bind_param("sss", $term, $term, $term);
+    $stmt->execute();
+    $students = $stmt->get_result();
+} else {
+    $students = $conn->query("SELECT * FROM students ORDER BY id DESC");
+}
+?>
+

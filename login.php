@@ -4,6 +4,11 @@ require_once "config.php";
 
 $error = "";
 
+function e($value)
+{
+    return htmlspecialchars((string) $value, ENT_QUOTES, "UTF-8");
+}
+
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $username = trim($_POST["username"] ?? "");
     $password = $_POST["password"] ?? "";
@@ -21,9 +26,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             header("Location: dashboard.php");
             exit();
         }
-    }
 
-    $error = "Invalid username or password.";
+        $error = "Wrong password.";
+    } else {
+        $error = "Username not found.";
+    }
 }
 ?>
 <!DOCTYPE html>

@@ -98,6 +98,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                     <label><input type="checkbox" name="skills[]" value="HTML"> HTML</label>
                     <label><input type="checkbox" name="skills[]" value="PHP"> PHP</label>
                     <label><input type="checkbox" name="skills[]" value="MySQL"> MySQL</label>
+                    <label><input type="checkbox" name="skills[]" value="Python"> Python</label>
+                    <label><input type="checkbox" name="skills[]" value="Java"> Java</label>
+                    <label><input type="checkbox" name="skills[]" value="SQL"> SQL</label>
+                    <label><input type="checkbox" name="skills[]" value="CSS"> CSS</label>
                 </div>
                 <label class="check-single"><input type="checkbox" name="hostel" value="1"> Hostel required</label>
                 <p class="hint">Calculation: total fee = course fee x semester + RM100 registration fee + RM450 hostel fee if selected.</p>
